@@ -1,0 +1,12 @@
+{% extends 'base.html.twig' %}
+{% block title %}Statut de la demande{% endblock %}
+{% block body %}
+<h1 class="text-2xl font-bold mb-6">Statut de la demande</h1>
+<div class="bg-white border border-gray-200 rounded-lg p-6">
+    <p class="mb-2">Complétion du profil : <strong>{{ user.tauxCompletion }}%</strong></p>
+    <div class="w-full bg-gray-200 rounded-full h-3 mb-4">
+        <div class="bg-red-600 h-3 rounded-full" style="width: {{ user.tauxCompletion }}%"></div>
+    </div>
+    <p class="text-sm text-gray-600">Documents envoyés : {{ user.documents|length }}</p>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+{% block title %}Accueil — Visa Canada{% endblock %}
+{% block body %}
+<div class="grid md:grid-cols-2 gap-8 items-center">
+    <div>
+        <h1 class="text-4xl font-extrabold mb-4">Demande de visa pour le <span class="text-red-600">Canada</span></h1>
+        <p class="text-gray-600 mb-6">Créez votre dossier en ligne, complétez votre profil et téléversez vos documents en toute simplicité.</p>
+        {% if app.user %}
+            <a href="{{ path('app_profile') }}" class="inline-block px-5 py-3 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700">Accéder à mon profil</a>
+        {% else %}
+            <a href="{{ path('app_register') }}" class="inline-block px-5 py-3 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700">Commencer ma demande</a>
+        {% endif %}
+    </div>
+    <div class="bg-blue-950 border-4 border-red-600 rounded-xl p-6 text-white shadow-xl">
+        <p class="uppercase tracking-widest text-xs text-red-300">Canada / Passport</p>
+        <p class="text-2xl font-bold mt-2">🍁 Immigration, Réfugiés et Citoyenneté</p>
+        <p class="text-sm text-gray-300 mt-4">Votre passeport numérique s'affichera ici une fois votre profil complété.</p>
+    </div>
+</div>
+
+<div class="grid md:grid-cols-3 gap-6 mt-16">
+    <div class="p-5 bg-white rounded-lg border border-gray-200">
+        <h3 class="font-semibold mb-1">1. Inscription</h3>
+        <p class="text-sm text-gray-600">Créez votre compte avec vos informations de passeport de base.</p>
+    </div>
+    <div class="p-5 bg-white rounded-lg border border-gray-200">
+        <h3 class="font-semibold mb-1">2. Profil</h3>
+        <p class="text-sm text-gray-600">Complétez progressivement vos informations personnelles.</p>
+    </div>
+    <div class="p-5 bg-white rounded-lg border border-gray-200">
+        <h3 class="font-semibold mb-1">3. Documents</h3>
+        <p class="text-sm text-gray-600">Téléversez vos pièces justificatives par catégorie.</p>
+    </div>
+</div>
+{% endblock %}

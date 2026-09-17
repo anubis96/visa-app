@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+{% block title %}Compléter mon profil{% endblock %}
+{% block body %}
+<h1 class="text-2xl font-bold mb-6">Compléter mon dossier</h1>
+<div class="bg-white border border-gray-200 rounded-lg p-8 max-w-3xl">
+    {{ form_start(profileForm, {attr: {class: 'grid md:grid-cols-2 gap-4'}}) }}
+        {{ form_row(profileForm.dateNaissance) }}
+        {{ form_row(profileForm.lieuNaissance) }}
+        {{ form_row(profileForm.nationalite) }}
+        {{ form_row(profileForm.sexe) }}
+        {{ form_row(profileForm.dateEmission) }}
+        {{ form_row(profileForm.dateExpiration) }}
+        {{ form_row(profileForm.paysEmission) }}
+        {{ form_row(profileForm.telephone) }}
+        {{ form_row(profileForm.adresse) }}
+        {{ form_row(profileForm.ville) }}
+        {{ form_row(profileForm.pays) }}
+        {{ form_row(profileForm.codePostal) }}
+        {{ form_row(profileForm.profession) }}
+        {{ form_row(profileForm.situationFamiliale) }}
+        <div class="md:col-span-2">
+            <button type="submit" class="w-full py-2.5 rounded-md bg-red-600 text-white font-semibold hover:bg-red-700">Enregistrer</button>
+        </div>
+    {{ form_end(profileForm) }}
+</div>
+{% endblock %}
