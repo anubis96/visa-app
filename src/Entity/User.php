@@ -10,11 +10,15 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
+use Vich\UploaderBundle\Mapping\Attribute as Vich;
+use Symfony\Component\HttpFoundation\File\File;
+
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'app_user')]
 #[ORM\UniqueConstraint(name: 'UNIQ_EMAIL', fields: ['email'])]
 #[ORM\UniqueConstraint(name: 'UNIQ_PASSEPORT', fields: ['numeroPasseport'])]
+#[Vich\Uploadable]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -86,6 +90,22 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     #[ORM\Column(length: 50, nullable: true)]
     private ?string $situationFamiliale = null;
+
+    /**
+     * 0 = en attente (profil pas encore à 100% ou pas envoyé)
+     * 1 = envoyée (profil complet à 100% et demande soumise)
+     */
+    #[ORM\Column(type: Types::SMALLINT, options: ['default' => 0])]
+    private int $statut = 0;
+
+    #[Vich\UploadableField(mapping: 'user_photos', fileNameProperty: 'photo', size: 'photoSize')]
+    private ?File $photoFile = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    private ?string $photo = null;
+
+    #[ORM\Column(nullable: true)]
+    private ?int $photoSize = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
@@ -172,12 +192,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getProfession(): ?string { return $this->profession; }
     public function setProfession(?string $profession): static { $this->profession = $profession; return $this; }
 
+    public function getStatut(): int { return $this->statut; }
+    public function setStatut(int $statut): static { $this->statut = $statut; return $this; }
+    public function isDemandeEnvoyee(): bool { return 1 === $this->statut; }
+
+        public function setPhotoFile(?File $photoFile = null): static
+    {
+        $this->photoFile = $photoFile;
+        if (null !== $photoFile) {
+            $this->updatedAt = new \DateTimeImmutable();
+        }
+        return $this;
+    }
+
+    public function getPhotoFile(): ?File { return $this->photoFile; }
+
+    public function setPhoto(?string $photo): static { $this->photo = $photo; return $this; }
+    public function getPhoto(): ?string { return $this->photo; }
+
+    public function setPhotoSize(?int $photoSize): static { $this->photoSize = $photoSize; return $this; }
+    public function getPhotoSize(): ?int { return $this->photoSize; }
+
     public function getSituationFamiliale(): ?string { return $this->situationFamiliale; }
     public function setSituationFamiliale(?string $situationFamiliale): static { $this->situationFamiliale = $situationFamiliale; return $this; }
 
     public function getCreatedAt(): ?\DateTimeImmutable { return $this->createdAt; }
-    public function getUpdatedAt(): ?\DateTimeImmutable { return $this->updatedAt; }
-    public function setUpdatedAt(): static { $this->updatedAt = new \DateTimeImmutable(); return $this; }
+    
+    public function getUpdatedAt(): ?\DateTimeImmutable 
+    { 
+        return $this->updatedAt; 
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): static 
+    { 
+        $this->updatedAt = $updatedAt; 
+        return $this; 
+    }
 
     /** @return Collection<int, Document> */
     public function getDocuments(): Collection { return $this->documents; }

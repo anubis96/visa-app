@@ -9,12 +9,29 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\File;
+use Vich\UploaderBundle\Form\Type\VichImageType;
 
 class ProfileFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
+            ->add('photoFile', VichImageType::class, [
+                'label' => 'Photo de profil',
+                'required' => false,
+                'allow_delete' => false,
+                'download_uri' => false,
+                'image_uri' => true,
+                'attr' => ['class' => 'form-input'],
+                'constraints' => [
+                    new File([
+                        'maxSize' => '3M',
+                        'mimeTypes' => ['image/jpeg', 'image/png'],
+                        'mimeTypesMessage' => 'Merci de déposer une photo au format JPG ou PNG (3 Mo max).',
+                    ]),
+                ],
+            ])
             ->add('dateNaissance', DateType::class, [
                 'label' => 'Date de naissance', 'widget' => 'single_text', 'required' => false,
                 'attr' => ['class' => 'form-input'],

@@ -35,7 +35,7 @@ class ProfileController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $user->setUpdatedAt();
+            $user->setUpdatedAt(new \DateTimeImmutable());
             $entityManager->flush();
 
             $this->addFlash('success', 'Votre profil a été mis à jour.');
@@ -47,5 +47,32 @@ class ProfileController extends AbstractController
             'profileForm' => $form,
             'user' => $user,
         ]);
+    }
+
+    #[Route('/profil/envoyer', name: 'app_profile_send', methods: ['POST'])]
+    public function send(Request $request, EntityManagerInterface $entityManager): Response
+    {
+        /** @var User $user */
+        $user = $this->getUser();
+
+        if (!$this->isCsrfTokenValid('send-profile-' . $user->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Jeton invalide, merci de réessayer.');
+
+            return $this->redirectToRoute('app_profile');
+        }
+
+        if ($user->getTauxCompletion() < 100) {
+            $this->addFlash('error', 'Votre profil doit être complété à 100% avant l\'envoi.');
+
+            return $this->redirectToRoute('app_profile');
+        }
+
+        $user->setStatut(1);
+        $user->setUpdatedAt(new \DateTimeImmutable());
+        $entityManager->flush();
+
+        $this->addFlash('success', 'Votre demande a été envoyée avec succès.');
+
+        return $this->redirectToRoute('app_profile');
     }
 }

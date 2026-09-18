@@ -1,9 +1,26 @@
 {% extends 'base.html.twig' %}
 {% block title %}Mon Profil{% endblock %}
 {% block body %}
+
+{% if user.isDemandeEnvoyee %}
+    <div class="mb-6 px-4 py-3 rounded-md bg-blue-50 text-blue-900 border border-blue-200 text-sm">
+        Votre demande est en cours d'examen. Une réponse vous sera donnée avant la prise des empreintes.
+    </div>
+{% endif %}
+
 <div class="flex items-center justify-between mb-6">
     <h1 class="text-2xl font-bold">Mon Profil</h1>
-    <a href="{{ path('app_profile_edit') }}" class="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-semibold hover:bg-red-700">Compléter / Modifier</a>
+    <div class="flex items-center gap-3">
+        {% if not user.isDemandeEnvoyee %}
+            <a href="{{ path('app_profile_edit') }}" class="px-4 py-2 rounded-md border border-gray-300 text-sm font-semibold hover:border-red-600 hover:text-red-600">Compléter / Modifier</a>
+        {% endif %}
+        {% if user.tauxCompletion == 100 and not user.isDemandeEnvoyee %}
+            <form method="post" action="{{ path('app_profile_send') }}">
+                <input type="hidden" name="_token" value="{{ csrf_token('send-profile-' ~ user.id) }}">
+                <button type="submit" class="px-4 py-2 rounded-md bg-red-600 text-white text-sm font-semibold hover:bg-red-700">Envoyer</button>
+            </form>
+        {% endif %}
+    </div>
 </div>
 
 <div class="grid md:grid-cols-2 gap-8">
@@ -43,7 +60,16 @@
         </div>
         <div class="grid grid-cols-3 gap-4 items-center">
             <div class="col-span-1">
-                <div class="w-20 h-24 bg-gray-300/20 border border-white/30 rounded flex items-center justify-center text-xs text-gray-300">Photo</div>
+                {% if user.photo %}
+                    <img src="{{ vich_uploader_asset(user, 'photoFile') }}" 
+         alt="Photo de {{ user.prenom }}" 
+         class="w-20 h-24 object-cover rounded border border-white/30">
+                                    {# <div class="w-20 h-24 bg-gray-300/20 border border-white/30 rounded flex items-center justify-center text-xs text-gray-300">Photo</div> #}
+
+                    {# <img src="{{ asset('uploads/photos/' ~ user.photo) }}" alt="Photo de {{ user.prenom }}" class="w-20 h-24 object-cover rounded border border-white/30"> #}
+                {% else %}
+                    <div class="w-20 h-24 bg-gray-300/20 border border-white/30 rounded flex items-center justify-center text-xs text-gray-300">Photo</div>
+                {% endif %}
             </div>
             <div class="col-span-2 text-xs space-y-1.5">
                 <p><span class="text-gray-400">Type / Type</span><br><span class="font-semibold">P</span></p>
